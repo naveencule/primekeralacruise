@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Packages</title>
+</head>
+<body>
+  <h1>Packages</h1>
+  <a href="/admin_add_package">Add New Package</a>
+  <br><br>
+
+  {% if packages %}
+    <table border="1">
+        <tr>
+          <th>Title</th>
+          <th>Photo</th>
+          <th>Description</th>
+          <th>Action</th>
+        </tr>
+        {% for p in packages %}
+        <tr>
+          <td>{{ p.title }}</td>
+          <td>
+            {% if p.photo %}
+              <img src="{{ p.photo.url }}" alt="{{ p.title }}" width="150">
+            {% else %}
+              No photo
+            {% endif %}
+          </td>
+          <td>{{ p.description }}</td>
+          <td>
+            <a href="/admin_edit_package/{{p.id}}">Edit</a> | <a href="/admin_delete_package/{{p.id}}">Delete</a>
+          </td>
+        </tr>
+        {% endfor %}
+    </table>
+  {% else %}
+    <p>No packages found.</p>
+  {% endif %}
+</body>
+</html>

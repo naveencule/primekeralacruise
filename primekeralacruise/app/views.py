@@ -19,16 +19,6 @@ def login(request):
             if s.user_type == "admin":
                 request.session['log']="in"
                 return HttpResponse(f"<script>alert('Welcome Admin');window.location='/admin_home'</script>")
-            # elif s.user_type == "doctor":
-            #     request.session['log']="in"
-            #     q=Doctor.objects.get(LOGIN=lid)
-            #     request.session["doc_id"]=q.pk
-            #     return HttpResponse(f"<script>alert('Welcome doctor');window.location='/doctorhome'</script>")
-            # elif s.user_type == "staff":
-            #     request.session['log']="in"
-            #     q=Staff.objects.get(LOGIN=lid)
-            #     request.session["staff_id"]=q.pk
-            #     return HttpResponse(f"<script>alert('Welcome staff');window.location='/staffhome'</script>")
             else:
                 return HttpResponse(f"<script>alert('Invalid user...!');window.location='/login'</script>")
         else:
@@ -40,3 +30,36 @@ def login(request):
 
 def admin_home(request):
     return render(request,'admin/admin_home.html')
+
+def admin_view_package(request):
+    packages = Package.objects.all()
+    return render(request, 'admin/admin_view_package.html', {'packages': packages})
+
+def admin_add_package(request):
+    if request.method == 'POST':
+        title = request.POST.get('title')
+        photo = request.FILES.get('photo')
+        description = request.POST.get('description')
+        Package.objects.create(
+            title=title,
+            photo=photo,
+            description=description
+        )
+        return redirect('admin_view_package')
+    return render(request, 'admin/admin_add_package.html')
+
+def admin_edit_package(request, id):
+    package = Package.objects.get(id=id)
+    if request.method == 'POST':
+        package.title = request.POST.get('title')
+        package.description = request.POST.get('description')
+        if 'photo' in request.FILES:
+            package.photo = request.FILES['photo']
+        package.save()
+        return redirect('admin_view_package')
+    return render(request, 'admin/admin_edit_package.html', {'package': package})
+
+def admin_delete_package(request, id):
+    package = Package.objects.get(id=id)
+    package.delete()
+    return redirect('admin_view_package')
